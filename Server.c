@@ -27,6 +27,7 @@ typedef struct {
 MSG tempmsg = { 0 };
 CLIENT client[MAX_CLIENTS] = {0};
 int master_socket, addrlen, new_client;
+/* Thread xử lý việc client gửi tin nhắn */
 void *HandlerThread(void *args)
 {
     struct sockaddr_in address;
@@ -72,10 +73,12 @@ void *HandlerThread(void *args)
                     memset(&client[i].name, 0 , sizeof(client[i].name));
                 }else{
                     if(tempmsg.ACTION == INIT){
+                        /* Init tên người dùng */
                         strcpy(client[i].name, tempmsg.name);
                         break;
                     }
                     if(tempmsg.ACTION == PRIMSG){
+                        /* Tin nhắn riêng */
                             for(int j = 0; j< MAX_CLIENTS; j++)
                         {
                             if(strcmp(client[j].name, tempmsg.pname) == 0)
@@ -86,6 +89,7 @@ void *HandlerThread(void *args)
                         }
                         break;
                     }
+                    /* Tin nhắn thường */
                     for(int j = 0; j< MAX_CLIENTS; j++)
                     {
                         if(client[j].socket_client != fd)
@@ -140,6 +144,7 @@ int main(int argc, char *argv[])
     printf("Start waiting for connections\n");
 
     while(1){
+        /* Handler việc client kết nối tới */
         if((new_client = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0)
         {
             printf("Failed to accept client");

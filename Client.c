@@ -25,6 +25,7 @@ typedef struct {
 void catch_CTRL_C(int sig){
     running = 0;
 }
+/* Thay kí tự \n bằng \0 */
 void str_trim_lf (char* arr, int length) {
   int i;
   for (i = 0; i < length; i++) {
@@ -34,6 +35,7 @@ void str_trim_lf (char* arr, int length) {
     }
   }
 }
+/* Thread handler xử lý gửi message */
 void *send_msg_handler(void *args){
     char buffer[MAX] = {0};
     MSG sMSG = {0};
@@ -46,6 +48,7 @@ void *send_msg_handler(void *args){
         fgets(buffer, MAX, stdin);
         str_trim_lf(buffer, MAX);
         if(strstr(buffer, prvCMD) != NULL){
+            /* Private Message */
             pname = strtok(buffer, "*");
             pname = strtok(NULL,"*");
             msg = strtok(NULL,"*");
@@ -86,6 +89,7 @@ void *recv_msg_handler(void *args){
         memset(&sMSG, 0, sizeof(sMSG));
     }
 }
+/* Thread handler xử lý nhận message */
 int main(int argc, char *argv[]){
     MSG nMSG = {0};
     if(argc != 2){
